@@ -1,0 +1,9 @@
+# MongoDB Atlas connection string
+MONGODB_URI=mongodb+srv://KangSan:843302@toliet-db.2ua8fql.mongodb.net/?retryWrites=true&w=majority&appName=Toliet-DB
+MONGODB_DB=toilet_app
+
+# JWT secret
+JWT_SECRET=change-this-in-production
+
+# PORT (optional)
+PORT=3000
