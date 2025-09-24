@@ -42,4 +42,10 @@ cd toiletapplication_web
 npm install
 npm run dev
 ```
-### 팀원
+## 👥 팀원 (Collaborators)
+
+- 🟩 [agmgpwt](https://github.com/agmgpwt)
+- 🟪 [extra145](https://github.com/extra145)
+- 🟩 [kbj5419](https://github.com/kbj5419)
+- 🟧 [leedonggeund](https://github.com/leedonggeund)
+- 🟥 [lobotomy334](https://github.com/lobotomy334)
