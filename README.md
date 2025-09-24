@@ -35,9 +35,10 @@ npm install
 npx expo start
 --같은 Turnel
 npx expo start --tunnel
-
+```
 ### 2) 앱 (Expo)
 ```bash
 cd toiletapplication_web
 npm install
 npm run dev
+```
