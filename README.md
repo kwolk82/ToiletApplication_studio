@@ -23,6 +23,21 @@
 
 ### 1) 앱 (Expo)
 ```bash
-cd my-toilet-app-clean
+순서대로 코드 입력
+(1)
+cd toiletapp
 npm install
+(2)
+cd toilet-app-merged
+npm install
+
+--같은 WIFI
 npx expo start
+--같은 Turnel
+npx expo start --tunnel
+
+### 2) 앱 (Expo)
+```bash
+cd toiletapplication_web
+npm install
+npm run dev
