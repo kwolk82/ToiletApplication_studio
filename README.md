@@ -35,6 +35,7 @@ npm install
 cd toilet-app-merged
 npm install
 
+실행 시 주의사항 : 같은 WIFI 혹은 Turenel로 이용해야함
 --같은 WIFI
 npx expo start
 --같은 Turnel
