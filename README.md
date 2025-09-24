@@ -42,3 +42,4 @@ cd toiletapplication_web
 npm install
 npm run dev
 ```
+### 팀원
