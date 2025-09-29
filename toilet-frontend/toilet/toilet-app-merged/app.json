@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "My Toilet App",
+    "slug": "my-toilet-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "plugins": [],
+    "extra": {
+      "API_BASE_URL": "https://toilet-backend-starter.onrender.com",
+      "KAKAO_JAVASCRIPT_KEY": "e305950d640265b7607964545cf2aa75"
+    },
+    "runtimeVersion": { "policy": "appVersion" },
+    "updates": { "enabled": true },
+    "entryPoint": "./App.tsx"
+  }
+}
