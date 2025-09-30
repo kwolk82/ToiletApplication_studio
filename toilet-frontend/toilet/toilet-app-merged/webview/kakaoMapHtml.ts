@@ -33,13 +33,26 @@ export const kakaoMapHtml = `
         const lat = t.lat ?? t.latitude;
         const lng = t.lng ?? t.longitude;
         if (!lat || !lng) return;
+
+        // ✅ 커스텀 아이콘 + 크기 지정 (44x44)
+        const imageSize = new kakao.maps.Size(44, 44);
+        const markerImage = new kakao.maps.MarkerImage(
+          "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png", // 원하는 아이콘 경로
+          imageSize
+        );
+
         const marker = new kakao.maps.Marker({
           position: new kakao.maps.LatLng(lat, lng),
           map: map,
-          title: t.name || ''
+          title: t.name || '',
+          image: markerImage,
+          clickable: true
         });
+
         kakao.maps.event.addListener(marker, 'click', () => {
-          window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'marker_click', payload: t }));
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({ type: 'marker_click', payload: t })
+          );
         });
         toiletMarkers.push(marker);
       });
@@ -54,7 +67,7 @@ export const kakaoMapHtml = `
           map: map,
           image: new kakao.maps.MarkerImage(
             "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png",
-            new kakao.maps.Size(32, 32)
+            new kakao.maps.Size(40, 40) // ✅ 기존 32→40
           )
         });
       } else {

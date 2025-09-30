@@ -2,7 +2,7 @@ import * as ReactNative from "react-native";
 const Alert = ReactNative.Alert;
 // screens/KakaoMap1.tsx
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Animated } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Animated, TextInput, ActivityIndicator } from "react-native";
 import { WebView } from "react-native-webview";
 import * as Location from "expo-location";
 
@@ -13,7 +13,8 @@ import { kakaoMapHtml } from "../webview/kakaoMapHtml";
 import RadiusStepper from "../components/RadiusStepper";
 
 import { toggleFavorite } from "../lib/favoritesSync";
-import { api } from "../services/api"; // axios 인스턴스 (선택: afterSync에서 /favorites GET 용)
+import { api, postReview, fetchReviews, fetchRating, ToiletLite } from "../services/api";
+import StarRating from "../components/StarRating";
 
 type LatLng = { latitude: number; longitude: number };
 type Route = { distance: string; duration: string; path: LatLng[] };
@@ -161,7 +162,7 @@ export default function KakaoMap1() {
     }
   };
 
-  // ★ 즐겨찾기 토글 (enqueueToggle → toggleFavorite 로 교체)
+  // ★ 즐겨찾기 토글
   const onToggleFavorite = useCallback(
     (t: Toilet) => {
       const key = toiletKey(t);
@@ -180,29 +181,22 @@ export default function KakaoMap1() {
       // 서버 동기화
       toggleFavorite({
         target: { id: null, name: t.name, lat: t.lat, lng: t.lng },
-        // 현재 목록을 FavoriteItem[] 모양으로 흉내 내서 전달 (키만 중요)
         currentList: Array.from(favKeys).map((k) => ({
           key: k,
           toilet: { id: null, name: "", lat: 0, lng: 0 },
         })),
         onLocalUpdate: (nextList) => {
-          // 서버 응답 기준으로 키 세트 재구성
           const keys = nextList.map((i) => i.key);
           setFavKeys(new Set(keys));
         },
         afterSync: async () => {
-          // 필요 시 서버 최신 상태로 동기화
           try {
             const { data } = await api.get("/favorites");
             const keys = (data.items ?? []).map((d: any) => d.key);
             setFavKeys(new Set(keys));
-          } catch {
-            // ignore
-          }
+          } catch {}
         },
-      }).catch(() => {
-        // 실패 시 낙관적 업데이트 롤백할 수 있음(선택)
-      });
+      }).catch(() => {});
     },
     [favKeys]
   );
@@ -267,6 +261,9 @@ export default function KakaoMap1() {
                   <Text style={styles.outlineBtnText}>닫기</Text>
                 </TouchableOpacity>
               </View>
+
+              {/* 🚻 댓글/별점 패널 */}
+              <DetailPanel toilet={selectedToilet} />
             </Animated.View>
           )}
 
@@ -292,6 +289,91 @@ export default function KakaoMap1() {
   );
 }
 
+function DetailPanel({ toilet }: { toilet: Toilet }) {
+  const [avg, setAvg] = React.useState(0.0);
+  const [count, setCount] = React.useState(0);
+  const [myRating, setMyRating] = React.useState(0);
+  const [comment, setComment] = React.useState("");
+  const [reviews, setReviews] = React.useState<
+    { id: string; userName: string; comment: string; createdAt: string }[]
+  >([]);
+  const [loading, setLoading] = React.useState(true);
+
+  const placeKey =
+    (toilet as any).id ??
+    `${toilet.name}|${toilet.lat.toFixed(6)},${toilet.lng.toFixed(6)}`;
+
+  const loadMeta = React.useCallback(async () => {
+    try {
+      setLoading(true);
+      const [r1, r2] = await Promise.all([fetchRating(placeKey), fetchReviews(placeKey)]);
+      setAvg(r1?.avg ?? 0.0);
+      setCount(r1?.count ?? 0);
+      setReviews(r2?.items ?? []);
+    } catch {} finally {
+      setLoading(false);
+    }
+  }, [placeKey]);
+
+  React.useEffect(() => {
+    loadMeta();
+  }, [loadMeta]);
+
+  const submit = async () => {
+    if (myRating < 1 && comment.trim().length === 0) {
+      Alert.alert("안내", "별점 또는 댓글을 입력하세요.");
+      return;
+    }
+    await postReview({
+      toilet: {
+        id: (toilet as any).id ?? undefined,
+        name: toilet.name,
+        lat: toilet.lat,
+        lng: toilet.lng,
+        address: toilet.address,
+      },
+      rating: myRating || undefined,
+      comment: comment.trim() || undefined,
+    });
+    setComment("");
+    await loadMeta();
+  };
+
+  return (
+    <View style={reviewStyles.wrap}>
+      <Text style={reviewStyles.avg}>⭐ 평균 {avg.toFixed(1)} / 5 ({count}명)</Text>
+
+      <StarRating value={myRating} onChange={setMyRating} />
+      {myRating > 0 && <Text style={{ marginTop: 4 }}>{myRating}점</Text>}
+
+      <TextInput
+        value={comment}
+        onChangeText={setComment}
+        placeholder="댓글 입력"
+        style={reviewStyles.input}
+        multiline
+      />
+      <TouchableOpacity style={reviewStyles.submitBtn} onPress={submit}>
+        <Text style={reviewStyles.submitTxt}>등록</Text>
+      </TouchableOpacity>
+
+      {loading ? (
+        <ActivityIndicator style={{ marginTop: 8 }} />
+      ) : reviews.length === 0 ? (
+        <Text style={{ color: "#666" }}>아직 댓글이 없습니다.</Text>
+      ) : (
+        reviews.map((r) => (
+          <View key={r.id} style={reviewStyles.item}>
+            <Text style={reviewStyles.user}>{r.userName}</Text>
+            <Text>{r.comment}</Text>
+            <Text style={reviewStyles.time}>{new Date(r.createdAt).toLocaleString()}</Text>
+          </View>
+        ))
+      )}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: { flex: 1 },
   loading: { flex: 1, justifyContent: "center", alignItems: "center" },
@@ -299,7 +381,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
-    height: 240,
     backgroundColor: "#fff",
     padding: 16,
     borderTopWidth: 1,
@@ -339,4 +420,28 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
   },
   radiusBarContainer: { position: "absolute", bottom: 30, left: 20, zIndex: 10 },
+});
+
+const reviewStyles = StyleSheet.create({
+  wrap: { marginTop: 12, borderTopWidth: 1, borderColor: "#eee", paddingTop: 8 },
+  avg: { fontWeight: "700", marginBottom: 4 },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 6,
+    padding: 8,
+    minHeight: 40,
+    marginTop: 6,
+  },
+  submitBtn: {
+    backgroundColor: "#4a6cff",
+    marginTop: 6,
+    paddingVertical: 8,
+    borderRadius: 6,
+    alignItems: "center",
+  },
+  submitTxt: { color: "#fff", fontWeight: "700" },
+  item: { borderTopWidth: 1, borderColor: "#eee", paddingVertical: 6 },
+  user: { fontWeight: "700" },
+  time: { fontSize: 11, color: "#999" },
 });

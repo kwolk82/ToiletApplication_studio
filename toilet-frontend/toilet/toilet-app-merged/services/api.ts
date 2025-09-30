@@ -13,7 +13,6 @@ export const api = axios.create({
 api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   const token = await AsyncStorage.getItem("authToken");
   if (token) {
-    // AxiosHeaders 여부 상관없이 항상 객체 병합으로 처리
     config.headers = {
       ...(config.headers || {}),
       Authorization: `Bearer ${token}`,
@@ -22,21 +21,19 @@ api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   return config;
 });
 
-// ✅ 응답 인터셉터: 토큰 만료 처리 + 네트워크 재시도
+// ✅ 응답 인터셉터
 api.interceptors.response.use(
   (res) => res,
   async (error: AxiosError) => {
     const cfg: any = error.config || {};
     const status = error?.response?.status;
 
-    // 401 → 자동 로그아웃
     if (status === 401) {
       await AsyncStorage.removeItem("authToken");
       await AsyncStorage.removeItem("currentUser");
       return Promise.reject(error);
     }
 
-    // 서버 오류나 네트워크 오류 → 1회 재시도
     const retriable =
       !cfg.__isRetry &&
       ((status && status >= 500) ||
@@ -95,8 +92,7 @@ export type FavItem = {
 
 // 프론트/백엔드 동일 규칙
 export const toKey = (t: ToiletLite) =>
-  t?.id ??
-  `${t?.name}|${Number(t?.lat).toFixed(6)},${Number(t?.lng).toFixed(6)}`;
+  t?.id ?? `${t?.name}|${Number(t?.lat).toFixed(6)},${Number(t?.lng).toFixed(6)}`;
 
 // 즐겨찾기 목록 불러오기
 export async function fetchFavorites() {
@@ -120,3 +116,27 @@ export async function batchFavorites(payload: { adds: ToiletLite[]; removes: Toi
   const { data } = await api.post("/favorites/batch", body);
   return data as { success: boolean; items: FavItem[] };
 }
+
+// ---------- 댓글 & 별점 API ----------
+
+// 댓글/별점 등록
+export async function postReview(payload: { toilet: ToiletLite; rating?: number; comment?: string }) {
+  const { data } = await api.post("/reviews", payload);
+  return data as { success: boolean };
+}
+
+// 댓글 목록 가져오기
+export async function fetchReviews(placeKey: string) {
+  const { data } = await api.get(`/reviews/${encodeURIComponent(placeKey)}`);
+  return data as {
+    success: boolean;
+    items: { id: string; userName: string; comment: string; createdAt: string }[];
+  };
+}
+
+// 평균 별점 가져오기
+export async function fetchRating(placeKey: string) {
+  const { data } = await api.get(`/ratings/${encodeURIComponent(placeKey)}`);
+  return data as { success: boolean; avg: number; count: number };
+}
+
