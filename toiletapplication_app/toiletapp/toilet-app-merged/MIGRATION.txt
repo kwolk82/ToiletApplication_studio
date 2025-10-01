@@ -1,1 +1,0 @@
-Unified App.tsx added: login(Signup/Login) -> Main Tabs(지도/즐겨찾기/설정). Toggle stored in AsyncStorage.
