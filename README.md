@@ -1,4 +1,4 @@
-# ToiletApplication_studio
+# ToiletApplication_studio                                              
 -한국폴리텍대학 인천캠퍼스 AI융합소프트웨어학과
  
 ##프로젝트 소개
@@ -27,23 +27,23 @@
 ## 🚀 실행 방법
 
 ### 1) 앱 (Expo)
-```bash
+```bash                        
+ToiletApplication_studio\toiletapplication_app\toilet-frontend\toilet\toilet-app-merged
+프로젝트 실행전 해야하는 명령어.txt파일-> 명령어 확인
+                                                                                                                    
 순서대로 코드 입력
-(1)
-cd toiletapp
-npm install
-(2)
 cd toilet-app-merged
 npm install
+npx expo install expo-location expo-notifications expo-constants react-native-webview @react-native-async-storage/async-storage
 
 실행 시 주의사항 : 같은 WIFI 혹은 Turenel로 이용해야함
 --같은 WIFI
 npx expo start
 --같은 Turnel
-npx expo start --tunnel
+npx expo start --tunnel -c
 ```
 ### 2) 앱 (Expo)
-```bash
+```bash                                                                                                                                                                                                          
 cd toiletapplication_web
 npm install
 npm run dev
