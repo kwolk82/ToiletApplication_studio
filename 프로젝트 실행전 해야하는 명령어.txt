@@ -1,0 +1,1 @@
+npx expo install expo-location expo-notifications expo-constants react-native-webview @react-native-async-storage/async-storage
