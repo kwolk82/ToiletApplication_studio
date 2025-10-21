@@ -1,6 +1,6 @@
 import React from "react";
 import Check from "./Check.jsx";
-import tiletMap from "../assets/메인 앱 스크린샷.jpg";
+import tiletMap from "../assets/mainscreen.jpg";
 
 export default function Hero() {
   return (
@@ -25,7 +25,7 @@ export default function Hero() {
         <div className="hero-shot">
           <div className="device-frame">
             <img
-              src="{toiletMap}"
+              src={toiletMap}
               alt="화장실 어플 지도 화면"
             />
           </div>
