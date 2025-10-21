@@ -4,7 +4,7 @@ import screen2 from "../assets/screen2.jpg";
 import screen3 from "../assets/screen3.jpg";
 
 export default function Screens() {
-  const screenshots = [screen1, screen2, screen3];
+  const screenshots = ["https://picsum.photos/id/1003/800/1600", screen2, screen3];
 
   return (
     <section id="screens" className="section alt">
