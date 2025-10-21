@@ -1,6 +1,6 @@
 import React from "react";
 import Check from "./Check.jsx";
-import toiletMap from "../assets/mainscreen.jpg";
+import toiletMap from "@/assets/mainscreen.jpg";
 
 export default function Hero() {
   return (
