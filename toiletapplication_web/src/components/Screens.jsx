@@ -1,7 +1,7 @@
 import React from "react";
-import screen1 from "../assets/screens/screen1.jpg";
-import screen2 from "../assets/screens/screen2.jpg";
-import screen3 from "../assets/screens/screen3.jpg";
+import screen1 from "../assets/screen1.jpg";
+import screen2 from "../assets/screen2.jpg";
+import screen3 from "../assets/screen3.jpg";
 
 export default function Screens() {
   const screenshots = [screen1, screen2, screen3];
