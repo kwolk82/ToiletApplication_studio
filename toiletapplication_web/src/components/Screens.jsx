@@ -1,15 +1,20 @@
 import React from "react";
+import screen1 from "../assets/screens/screen1.jpg";
+import screen2 from "../assets/screens/screen2.jpg";
+import screen3 from "../assets/screens/screen3.jpg";
 
 export default function Screens() {
+  const screenshots = [screen1, screen2, screen3];
+
   return (
     <section id="screens" className="section alt">
       <div className="container">
         <h2>스크린샷</h2>
         <p className="muted">앱의 실제 화면을 확인해 보세요.</p>
         <div className="grid three">
-          {[1, 2, 3].map((i) => (
+          {screenshots.map((src, i) => (
             <div key={i} className="shot">
-              <img src={`https://picsum.photos/seed/toiletapp_${i}/800/1600`} alt={`앱 스크린샷 ${i}`} />
+              <img src={src} alt={`앱 스크린샷 ${i + 1}`} />
             </div>
           ))}
         </div>
