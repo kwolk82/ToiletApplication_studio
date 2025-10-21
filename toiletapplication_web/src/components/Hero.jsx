@@ -26,7 +26,7 @@ export default function Hero() {
           <div className="device-frame">
             <img
               src={toiletMap}
-              alt="화장실 어플 지도 화면"
+              alt="화장실 어플 지도화면"
             />
           </div>
           <div className="blob blob-a" />
