@@ -1,4 +1,4 @@
-# ToiletApplication_studio                                                                                
+# ToiletApplication_studio                                                                                                                      
 -한국폴리텍대학 인천캠퍼스 AI융합소프트웨어학과
 -2025년 2학년 B반 1팀
  
@@ -20,7 +20,7 @@
 - **Frontend(Web)**: Vite + React + TailwindCSS
 - **Backend**: Node.js, Express
 - **Database**: MongoDB Atlas
-- **Map API**: Kakao Map API, Tmap API
+- **Map API**: Kakao Map API, MapBox API
 - **Deployment**: Vercel, GitHub Actions
 
 ---
@@ -28,7 +28,7 @@
 ## 🚀 실행 방법
 
 ### 1) 앱 (Expo)
-```bash                                                          
+```bash                                                                                                
 ToiletApplication_studio\toiletapplication_app\toilet-frontend\toilet\toilet-app-merged
 프로젝트 실행전 해야하는 명령어.txt파일-> 명령어 확인
                                                                                                                     
